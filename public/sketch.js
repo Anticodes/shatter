@@ -5,25 +5,38 @@ socket.on("refresh", () => {
 });
 
 const glass = new Glass();
-const width = 512, height = 512;
-const pixelRowCount = width * 4;
-const pixelCount = height * pixelRowCount;
+const dimension = 512;
+const polygonCount = 18;
+const canvasScale = 1.8;
+const diagonalSize = dimension * Math.sqrt(2);
+const pixelRowCount = dimension * 4;
+const pixelCount = dimension * pixelRowCount;
 var graphic;
 
 function setup() {
-    createCanvas(width, height);
+    createCanvas(dimension * canvasScale, dimension * canvasScale);
     pixelDensity(1);
-    noSmooth();
-    noStroke();
-    graphic = glass.generate();
+    //noStroke();
+    graphic = glass.generate(polygonCount);
+    createButton("Save").mousePressed(() => storeItem("cones", JSON.stringify(glass.shards.map(e => { return { 'x': e.pos.x, 'y': e.pos.y } }))));
+    createButton("Reset").mousePressed(clearStorage);
 }
 
 function draw() {
     background(255);
-    image(graphic, 0, 0);
+    scale(canvasScale);
+    //image(graphic, 0, 0);
+    glass.shards.forEach(e => {
+        fill(e.colour);
+        beginShape();
+        stroke(0);
+        e.points.forEach(el => vertex(el.x + dimension / 2, el.y + dimension / 2, 10));
+        endShape();
+    });
 }
 
 function mousePressed() {
+    graphic = glass.generate(polygonCount);
 }
 
 const middlePoint = (pos1, pos2) => {
@@ -47,12 +60,10 @@ const findCircle = (pos1, pos2, pos3) => {
     const x31 = (pos3.x - pos1.x);
     const x21 = (pos2.x - pos1.x);
 
-    const sx13 = Math.pow(pos1.x, 2) - Math.pow(pos3.x, 2);
-
-    const sy13 = Math.pow(pos1.y, 2) - Math.pow(pos3.y, 2);
-
-    const sx21 = Math.pow(pos2.x, 2) - Math.pow(pos1.x, 2);
-    const sy21 = Math.pow(pos2.y, 2) - Math.pow(pos1.y, 2);
+    const sx13 = pos1.x * pos1.x - pos3.x * pos3.x;
+    const sy13 = pos1.y * pos1.y - pos3.y * pos3.y;
+    const sx21 = pos2.x * pos2.x - pos1.x * pos1.x;
+    const sy21 = pos2.y * pos2.y - pos1.y * pos1.y;
 
     const f = ((sx13) * (x12)
         + (sy13) * (x12)
