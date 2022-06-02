@@ -74,10 +74,12 @@ class Glass {
         const threeplus = cones.map(e => findCircle(this.shards[e[0]].pos, this.shards[e[1]].pos, this.shards[e[2]].pos));
         //Add the intersecion points to the shard
         threeplus.forEach((item, index) => cones[index].forEach(ele => shards[ele].points.push(item)));
+        //Find and add the two way intersections to their respected shard
         intersections.filter((e) => e.includes(undefined)).forEach(e => {
             [e[0], e[1]].forEach(ele => shards.find(el => el.colour.toString() == ele).points.push(intersectionPoints[intersections.indexOf(e)]));
         });
         const corners = [[0, 0], [dimension - 1, 0], [0, dimension - 1], [dimension - 1, dimension - 1]];
+        //Find the corresponding shard for that corner and add to it
         corners.forEach(e => shards.find(el => el.colour.toString() == color(g.get(e[0], e[1])).toString()).points.push(createVector(e[0] - dimension / 2, dimension / 2 - e[1])));
         this.shards = shards;
         return g;
