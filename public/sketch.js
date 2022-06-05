@@ -18,30 +18,15 @@ function setup() {
     pixelDensity(1);
     noStroke();
     graphic = glass.generate(polygonCount);
-    createButton("Save").mousePressed(() => storeItem("cones", JSON.stringify(glass.shards.map(e => { return { 'x': e.pos.x, 'y': e.pos.y } }))));
+    createButton("Save").mousePressed(() => storeItem("cones", JSON.stringify(glass.shards.map(e => ({ 'x': e.pos.x, 'y': e.pos.y })))));
     createButton("Reset").mousePressed(clearStorage);
 }
 
-let once = true;
 function draw() {
     background(255);
     scale(canvasScale);
     //image(graphic, 0, 0);
-    glass.shards.forEach(e => {
-        if (once) console.log(e);
-        fill(e.colour);
-        beginShape(TRIANGLE_STRIP);
-        for (let i = 0; i < e.points.length; i += 2) {
-            vertex(e.points[i].x + dimension / 2, e.points[i].y + dimension / 2);
-            vertex(e.points[(i + 1) % e.points.length].x + dimension / 2, e.points[(i + 1) % e.points.length].y + dimension / 2);
-            vertex(e.points[(i + 2) % e.points.length].x + dimension / 2, e.points[(i + 2) % e.points.length].y + dimension / 2);
-            vertex(e.points[i].x + dimension / 2, e.points[i].y + dimension / 2);
-            vertex(e.points[(i + 1) % e.points.length].x + dimension / 2, e.points[(i + 1) % e.points.length].y + dimension / 2);
-            vertex(e.points[(i + 3) % e.points.length].x + dimension / 2, e.points[(i + 3) % e.points.length].y + dimension / 2);
-        }
-        endShape();
-    });
-    once = false;
+    glass.shards.forEach(e => e.render());
 }
 
 function mousePressed() {

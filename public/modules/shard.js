@@ -7,8 +7,10 @@ class Shard {
     }
 
     render() {
-        fill(this.selected ? 15 : 180);
-        circle(this.pos.x + width / 2, this.pos.y + height / 2, 10);
+        fill(this.colour);
+        beginShape();
+        this.points.forEach(el => vertex(el.x + dimension / 2, el.y + dimension / 2));
+        endShape(CLOSE);
     }
 
     onMousePressed() {

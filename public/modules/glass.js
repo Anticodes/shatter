@@ -81,6 +81,14 @@ class Glass {
         const corners = [[0, 0], [dimension - 1, 0], [0, dimension - 1], [dimension - 1, dimension - 1]];
         //Find the corresponding shard for that corner and add to it
         corners.forEach(e => shards.find(el => el.colour.toString() == color(g.get(e[0], e[1])).toString()).points.push(createVector(e[0] - dimension / 2, dimension / 2 - e[1])));
+        shards.forEach(e => {
+            const sorted = e.points.sort((a, b) => a.y === b.y ? b.x - a.x : a.y - b.y);
+            const firstPoint = sorted.pop();
+            const angleList = [];
+            sorted.forEach(el => angleList.push({ angle: p5.Vector.sub(el, firstPoint).heading(), point: el }));
+            angleList.sort((a, b) => a.angle - b.angle).unshift({ point: firstPoint });
+            e.points = angleList.map(el => el.point);
+        })
         this.shards = shards;
         return g;
     }
